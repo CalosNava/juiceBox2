@@ -1,35 +1,4 @@
-const {
-  client,
-  getAllUsers,
-  createUser,
-} = require('./index');
-
-async function createInitialUsers() {
-  try {
-    console.log("Starting to create users...");
-
-    const albert = await createUser({ username: 'albert', password: 'bertie99' });
-    const albertTwo = await createUser({ username: 'albert', password: 'imposter_albert' });
-
-
-    console.log(albert);
-
-    console.log("Finished creating users!");
-  } catch(error) {
-    console.error("Error creating users!");
-    throw error;
-  }
-}
-
-
-
-
-
-
-
-
-
-//////////////////////
+const { client, getAllUsers, createUser } = require("./index");
 
 async function dropTables() {
   try {
@@ -54,8 +23,11 @@ async function createTables() {
       CREATE TABLE users (
         id SERIAL PRIMARY KEY,
         username varchar(255) UNIQUE NOT NULL,
-        password varchar(255) NOT NULL
-      );
+        password varchar(255) NOT NULL,
+        name VARCHAR(255) NOT NULL
+        location VARCHAR(255) NOT NULL
+        active BOOLEAN DEFAULT true
+        );
     `);
 
     console.log("Finished building tables!");
@@ -65,19 +37,21 @@ async function createTables() {
   }
 }
 
-async function rebuildDB() {
+async function createInitialUsers() {
   try {
-    client.connect();
+    console.log("Starting to create users...");
 
-    await dropTables();
-    await createTables();
+    await createUser({ username: "albert", password: "bertie99" });
+    await createUser({ username: "sandra", password: "2sandy4me" });
+    await createUser({ username: "glamgal", password: "soglam" });
+
+    console.log("Finished creating users!");
   } catch (error) {
+    console.error("Error creating users!");
     throw error;
   }
 }
 
-//////////////////
-// then modify rebuildDB to call our new function
 async function rebuildDB() {
   try {
     client.connect();
@@ -89,9 +63,6 @@ async function rebuildDB() {
     throw error;
   }
 }
-
-
-///////////////////////
 
 async function testDB() {
   try {
@@ -106,7 +77,6 @@ async function testDB() {
     throw error;
   }
 }
-
 
 rebuildDB()
   .then(testDB)
